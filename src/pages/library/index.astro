@@ -1,0 +1,324 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import { getLibrary } from '@lib/site';
+import { getCollection } from 'astro:content';
+
+const domains = await getLibrary();
+
+const resources = (await getCollection('resources')).sort((a, b) =>
+  a.id.localeCompare(b.id, undefined, { numeric: true }),
+);
+
+const host = (url: string) => new URL(url).hostname.replace(/^www\./, '');
+---
+
+<BaseLayout title="Library" description="Every book of notes in Phypedia, organized by domain." sidebar>
+  <section class="library">
+    <header>
+      <h1>Library</h1>
+      <p class="intro">“The only thing that you absolutely have to know, is the location of the library.”</p>
+      <label class="filter">
+        <span class="sr-only">Filter books</span>
+        <input type="search" placeholder="Filter books..." autocomplete="off" data-library-filter />
+      </label>
+    </header>
+
+    {
+      domains.map((domain) => (
+        <section class="domain" data-domain aria-labelledby={`d-${domain.key}`}>
+          <h2 id={`d-${domain.key}`}>{domain.title}</h2>
+          {domain.description && <p class="domain-desc">{domain.description}</p>}
+          {domain.books.length > 0 ? (
+            <ul class="books">
+              {domain.books.map((book) => (
+                <li data-book data-text={`${book.title} ${domain.title}`.toLowerCase()}>
+                  <p class="name">
+                    {book.href ? <a href={book.href}>{book.title}</a> : book.title}
+                  </p>
+                  {book.description && <p class="desc">{book.description}</p>}
+                  <p class="meta">
+                    {book.sections} {book.sections === 1 ? 'section' : 'sections'}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p class="empty">No books yet.</p>
+          )}
+        </section>
+      ))
+    }
+
+    {
+      resources.length > 0 && (
+        <section class="resources" data-group     aria-labelledby="resources-title">
+          <header class="resources-head">
+            <h2 id="resources-title">Resources</h2>
+            <p>Resources worth exploring beyond these notes.</p>
+          </header>
+
+          {resources.map((group) => (
+            <section class="category" data-domain aria-labelledby={`r-$   {group.id}`}>
+              <h3 id={`r-${group.id}`}>{group.data.title}</h3>
+              {group.data.description && <p class="category-desc">{group.   data.description}</p>}
+              <ul class="cards">
+                {group.data.items.map((item) => (
+                  <li data-book data-text={`${item.title} ${item.by ?? ''} $    {group.data.title}`.toLowerCase()}>
+                    <a class="card" href={item.url} target="_blank"     rel="noopener noreferrer">
+                      <span class="host">{host(item.url)}</span>
+                      <span class="card-title">
+                        {item.title}
+                        <span class="sr-only"> (opens in a new tab)</span>
+                      </span>
+                      {item.by && <span class="card-by">{item.by}</span>}
+                      {item.note && <span class="card-note">{item.note}</   span>}
+                      <span class="arrow" aria-hidden="true">↗</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ))}
+        </section>
+      )
+    }
+
+    <p class="no-results" hidden>No books match your filter.</p>
+  </section>
+</BaseLayout>
+
+<style>
+  .library {
+    padding-block: clamp(2rem, 6vw, 4rem);
+  }
+  h1 {
+    margin: 0;
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: clamp(2.25rem, 6vw, 3.25rem);
+    font-weight: 500;
+    color: var(--ph-text-strong);
+  }
+  .intro {
+    margin: 0.5rem 0 1.5rem;
+    color: var(--ph-muted);
+  }
+  .filter input {
+    box-sizing: border-box;
+    width: min(100%, 24rem);
+    min-height: 2.75rem;
+    padding: 0.5rem 0.9rem;
+    border: 1px solid var(--ph-border);
+    border-radius: 0.6rem;
+    background: var(--ph-elevated);
+    color: var(--ph-text);
+    font: inherit;
+  }
+  .filter input:focus-visible {
+    outline: 2px solid var(--ph-accent);
+    outline-offset: 1px;
+  }
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .domain {
+    margin-block-start: clamp(2.5rem, 6vw, 3.5rem);
+  }
+  h2 {
+    margin: 0;
+    padding-block-end: 0.5rem;
+    border-block-end: 1px solid var(--ph-border);
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--ph-text-strong);
+  }
+  .domain-desc {
+    margin: 0.75rem 0 0;
+    color: var(--ph-muted);
+    font-size: 0.95rem;
+  }
+  .books {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr));
+    gap: 1rem;
+    margin: 1.25rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .books li {
+    position: relative; /* anchor for the stretched link */
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    padding: 1.1rem 1.25rem;
+    border: 1px solid var(--ph-border);
+    border-radius: 0.75rem;
+    background: var(--ph-elevated);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  /* display:flex above would override the filter's `hidden` attribute, so restore it. */
+  .books li[hidden] {
+    display: none;
+  }
+  .books li:has(a):hover {
+    border-color: var(--ph-accent);
+    box-shadow: 0 6px 20px -12px rgb(37 99 235 / 0.5);
+  }
+  .name {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--ph-text-strong);
+  }
+  .name a {
+    color: inherit;
+    text-decoration: none;
+  }
+  /* Stretched link: the whole card is the click target. */
+  .name a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+  }
+  .name a:focus-visible {
+    outline: none;
+  }
+  .name a:focus-visible::after {
+    outline: 2px solid var(--ph-accent);
+    outline-offset: 2px;
+  }
+  .desc,
+  .meta {
+    margin: 0;
+    color: var(--ph-muted);
+    font-size: 0.875rem;
+  }
+  .meta {
+    margin-block-start: auto; /* pins the section count to the card bottom */
+    padding-block-start: 0.5rem;
+  }
+  .empty,
+  .no-results {
+    margin-block-start: 1rem;
+    color: var(--ph-muted);
+  }
+
+  /* Resources: a separate section from the domain list above */
+  .resources {
+    margin-block-start: clamp(4rem, 10vw, 6.5rem);
+    padding-block-start: clamp(2rem, 5vw, 3rem);
+    border-block-start: 1px solid var(--ph-border);
+  }
+  .resources-head h2 {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-family: var(--ph-font-display);
+    font-size: clamp(1.75rem, 4vw, 2.25rem);
+    font-weight: 500;
+  }
+  .resources-head p {
+    margin: 0.5rem 0 0;
+    color: var(--ph-muted);
+  }
+  .category {
+    margin-block-start: 2.25rem;
+  }
+  .category h3 {
+    margin: 0;
+    color: var(--ph-muted);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .category-desc {
+    margin: 0.4rem 0 0;
+    color: var(--ph-muted);
+    font-size: 0.9rem;
+  }
+
+  /* Link cards */
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
+    gap: 0.75rem;
+    margin: 1rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    box-sizing: border-box;
+    height: 100%;
+    padding: 1rem 2.5rem 1rem 1.1rem;
+    border: 1px solid var(--ph-border);
+    border-radius: 0.75rem;
+    background: var(--ph-elevated);
+    color: var(--ph-text);
+    text-decoration: none;
+    transition: border-color 0.15s ease, transform 0.15s ease;
+  }
+  .card:hover {
+    border-color: var(--ph-accent);
+    transform: translateY(-2px);
+  }
+  .host {
+    color: var(--ph-muted);
+    font-family: var(--ph-font-mono);
+    font-size: 0.72rem;
+  }
+  .card-title {
+    color: var(--ph-text-strong);
+    font-weight: 600;
+    line-height: 1.35;
+  }
+  .card-by,
+  .card-note {
+    color: var(--ph-muted);
+    font-size: 0.85rem;
+  }
+  .arrow {
+    position: absolute;
+    inset-block-start: 0.9rem;
+    inset-inline-end: 1rem;
+    color: var(--ph-muted);
+    transition: color 0.15s ease, transform 0.15s ease;
+  }
+  .card:hover .arrow {
+    color: var(--ph-accent-text);
+    transform: translate(2px, -2px);
+  }
+</style>
+
+<script>
+  // Client-side filter over the already-rendered list; no data fetching needed.
+  const input = document.querySelector<HTMLInputElement>('[data-library-filter]');
+  const books = [...document.querySelectorAll<HTMLElement>('[data-book]')];
+  const domains = [...document.querySelectorAll<HTMLElement>('[data-domain]')];
+  const empty = document.querySelector<HTMLElement>('.no-results');
+  const groups = [...document.querySelectorAll<HTMLElement>('[data-group]')];
+
+  input?.addEventListener('input', () => {
+    const query = input.value.trim().toLowerCase();
+    books.forEach((book) => {
+      book.hidden = query !== '' && !(book.dataset.text ?? '').includes(query);
+    });
+    domains.forEach((domain) => {
+      const visible = domain.querySelector('[data-book]:not([hidden])');
+      domain.hidden = query !== '' && !visible;
+    });
+    groups.forEach((group) => {
+      group.hidden = query !== '' && !group.querySelector('[data-book]:not([hidden])');
+    });
+    if (empty) empty.hidden = query === '' || books.some((book) => !book.hidden);
+  });
+</script>

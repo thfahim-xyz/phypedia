@@ -1,0 +1,13 @@
+{
+  "title": "Websites",
+  "description": "Useful physics websites for learning and reference.",
+  "items": [
+    { "title": "Khan Academy", "url": "https://www.khanacademy.org/" },
+    { "title": "MIT OpenCourseWare", "url": "https://ocw.mit.edu/" },
+    { "title": "HyperPhysics", "url": "http://hyperphysics.phy-astr.gsu.edu/" },
+    { "title": "The Feynman Lectures Online", "url": "https://www.feynmanlectures.caltech.edu/" },
+    { "title": "Orbital Mechanics & Astrodynamics", "url": "https://orbital-mechanics.space/" },
+    { "title": "Computational Astrophysics", "url": "https://zingale.github.io/computational_astrophysics/" },
+    { "title": "PhET Interactive Simulations", "url": "https://phet.colorado.edu/" }
+  ]
+}

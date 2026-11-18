@@ -1,0 +1,76 @@
+---
+/**
+ * Replaces Starlight's theme <select> with a single light/dark toggle button.
+ * Starlight's ThemeProvider (in <head>) already resolves the initial theme from
+ * localStorage or the system preference before first paint; this only flips it
+ * and persists the choice under the same `starlight-theme` key.
+ */
+---
+
+<button type="button" class="theme-toggle" data-theme-toggle aria-label="Toggle light and dark theme">
+  <svg class="sun" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true">
+    <circle cx="12" cy="12" r="4" />
+    <path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4" />
+  </svg>
+  <svg class="moon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5a8.5 8.5 0 1 0 10.7 10.7Z" />
+  </svg>
+</button>
+
+<style>
+  .theme-toggle {
+    display: inline-grid;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: 0;
+    border: 0;
+    border-radius: 0.5rem;
+    background: transparent;
+    color: var(--ph-muted);
+    cursor: pointer;
+    transition: color 0.15s ease, background-color 0.15s ease;
+  }
+  .theme-toggle:hover {
+    color: var(--ph-text);
+    background: var(--ph-hover);
+  }
+  .theme-toggle:focus-visible {
+    outline: 2px solid var(--ph-accent);
+    outline-offset: 2px;
+  }
+  /* Show the icon of the theme you would switch to. */
+  :global(:root[data-theme='dark']) .moon,
+  :global(:root:not([data-theme='dark'])) .sun {
+    display: none;
+  }
+</style>
+
+<script>
+  const root = document.documentElement;
+  const system = window.matchMedia('(prefers-color-scheme: dark)');
+
+  const hasStoredTheme = () => {
+    try {
+      return Boolean(localStorage.getItem('starlight-theme'));
+    } catch {
+      return false;
+    }
+  };
+
+  document.addEventListener('click', (event) => {
+    if (!(event.target instanceof Element) || !event.target.closest('[data-theme-toggle]')) return;
+    const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
+    root.dataset.theme = next;
+    try {
+      localStorage.setItem('starlight-theme', next);
+    } catch {
+      /* storage unavailable: the choice simply won't persist */
+    }
+  });
+
+  // Follow system changes until the reader makes an explicit choice.
+  system.addEventListener('change', (event) => {
+    if (!hasStoredTheme()) root.dataset.theme = event.matches ? 'dark' : 'light';
+  });
+</script>

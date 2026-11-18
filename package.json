@@ -1,0 +1,24 @@
+{
+  "name": "phypedia",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A personal collection of notes for exploring physics through concepts, intuition, and mathematics.",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/markdown-satteri": "^0.4.7",
+    "@astrojs/starlight": "^0.43.1",
+    "astro": "^7.4.12",
+    "mermaid": "^12.3.0",
+    "satteri-mathjax": "^0.3.0",
+    "sharp": "^0.35.5"
+  },
+  "engines": {
+    "node": ">=22.22.0"
+  }
+}

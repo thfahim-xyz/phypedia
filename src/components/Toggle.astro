@@ -1,0 +1,109 @@
+---
+/**
+ * Collapsible content (Notion-style toggle), built on native <details>.
+ * <Toggle title="Proof">…</Toggle>      <Toggle title="Hint" open>…</Toggle>
+ */
+interface Props {
+  title: string;
+  open?: boolean;
+}
+
+const { title, open = false } = Astro.props;
+---
+
+<details class="toggle" open={open}>
+  <summary class="not-content">
+  <svg class="chevron" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M9 6l6 6-6 6" />
+  </svg>
+  <span><b>{title}</b></span>
+  </summary>
+  <div class="body"><slot /></div>
+</details>
+
+<style>
+  .toggle {
+    margin-block: 1.25rem;
+    border: 1px solid var(--ph-border);
+    border-radius: 0.5rem;
+    padding-left: 0;
+    overflow: hidden;
+  }
+
+  summary {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin: 0;
+    padding: 0.65rem 1rem;
+    cursor: pointer;
+    font-weight: 500;
+    list-style: none;
+  }
+
+  /* Remove every native or inherited marker, so only the SVG chevron   remains. */
+  summary::marker {
+    content: '';
+    display: none;
+  }
+  summary::-webkit-details-marker {
+    display: none;
+  }
+  summary::before,
+  summary::after {
+    content: none;
+  }
+
+  .chevron {
+    flex: none;
+    color: var(--ph-muted);
+    transition: transform 0.15s ease;
+  }
+  details[open] > summary .chevron {
+    transform: rotate(90deg);
+  }
+
+  summary:hover {
+    background: var(--ph-hover);
+  }
+
+  summary:focus-visible {
+    outline: 2px solid var(--ph-accent);
+    outline-offset: -2px;
+  }
+
+  .body {
+    padding: 0.25rem 1rem 1rem;
+  }
+
+  .body > :global(:first-child) {
+    margin-block-start: 0;
+  }
+
+  .body > :global(:last-child) {
+    margin-block-end: 0;
+  }
+
+  @media print {
+    .chevron {
+      display: none;
+    }
+    summary {
+      border-bottom: 1px solid var(--ph-border);
+    }
+  }
+</style>
+
+<script>
+  // Printing should include collapsed content: open every toggle, restore afterwards.
+  const closed: HTMLDetailsElement[] = [];
+  window.addEventListener('beforeprint', () => {
+    document.querySelectorAll<HTMLDetailsElement>('details.toggle:not([open])').forEach((el) => {
+      el.open = true;
+      closed.push(el);
+    });
+  });
+  window.addEventListener('afterprint', () => {
+    closed.splice(0).forEach((el) => (el.open = false));
+  });
+</script>

@@ -1,0 +1,175 @@
+---
+/**
+ * Left sidebar with two automatic modes, both generated from the filesystem:
+ *   - Reading mode on any page inside a book: the book's chapters and sections.
+ *   - Global mode everywhere else: Library, the domains (with their books), About.
+ * Replaces Starlight's configured sidebar entirely.
+ */
+import NavTree from '../NavTree.astro';
+import MobileMenuFooter from './MobileMenuFooter.astro';
+import { getGlobalNav, getReadingContext } from '../../lib/site';
+import { withBase } from '../../lib/paths';
+
+const pathname = Astro.url.pathname.endsWith('/') ? Astro.url.pathname : `${Astro.url.pathname}/`;
+const reading = await getReadingContext(pathname);
+const globalItems = await getGlobalNav();
+const standalone = reading ? reading.domain === reading.book : false;
+---
+
+<phypedia-nav>
+  {
+    reading && (
+      <nav class="nav" data-view="reading" aria-label="Book contents">
+        <button type="button" class="back" data-show="global">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M15 5l-7 7 7 7" />
+          </svg>
+          Back
+        </button>
+        {/* …keep your existing <header class="book">…</header> block here… */}
+        <NavTree items={reading.items} current={pathname} />
+      </nav>
+    )
+  }
+  <nav
+    class="nav"
+    data-view="global"
+    aria-label="Library navigation"
+    hidden={Boolean(reading)}
+  >
+    {
+      reading && (
+        <button type="button" class="back" data-show="reading">
+          {reading.book.title}
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+      )
+    }
+    <NavTree items={globalItems} current={pathname} />
+  </nav>
+  <div class="mobile-footer"><MobileMenuFooter /></div>
+</phypedia-nav>
+
+<style>
+  /* Links and theme toggle are in the header on desktop, in the drawer on mobile. */
+  .mobile-footer {
+    margin-block-start: 1.5rem;
+  }
+  @media (min-width: 50rem) {
+    .mobile-footer {
+      display: none;
+    }
+  }
+  .back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-block-end: 1rem;
+    padding: 0.25rem 0.5rem 0.25rem 0.25rem;
+    border-radius: 0.4rem;
+    color: var(--ph-muted);
+    font-size: 0.85rem;
+    text-decoration: none;
+    border: 0;
+    background: none;
+    font-family: inherit;
+    cursor: pointer;
+  }
+  .back:hover {
+    color: var(--ph-text);
+    background: var(--ph-hover);
+  }
+  .back:focus-visible,
+  .book-title a:focus-visible {
+    outline: 2px solid var(--ph-accent);
+    outline-offset: 2px;
+  }
+  .book {
+    margin-block-end: 1rem;
+    padding-inline: 0.25rem;
+  }
+  .eyebrow {
+    margin: 0 0 0.2rem;
+    color: var(--ph-muted);
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .book-title {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 600;
+    line-height: 1.25;
+    color: var(--ph-text-strong);
+  }
+  .book-title a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .book-title a:hover,
+  .book-title a[aria-current='page'] {
+    color: var(--ph-accent-text);
+  }
+</style>
+
+<script>
+  /**
+   * Preserves sidebar state across page loads: which groups are open and how far
+   * the sidebar was scrolled. Groups on the current page's path always stay open.
+   */
+  class PhypediaNav extends HTMLElement {
+    connectedCallback() {
+      const storageKey = 'phypedia-nav';
+      const scroller = this.closest<HTMLElement>('.sidebar-pane');
+      let saved: Record<string, boolean | number> = {};
+      try {
+        saved = JSON.parse(sessionStorage.getItem(storageKey) ?? '{}');
+      } catch {
+        /* ignore malformed state */
+      }
+      const persist = () => {
+        try {
+          sessionStorage.setItem(storageKey, JSON.stringify(saved));
+        } catch {
+          /* storage unavailable */
+        }
+      };
+
+      this.querySelectorAll<HTMLDetailsElement>('details[data-nav-key]').forEach((details) => {
+        const key = details.dataset.navKey ?? '';
+        if (!details.hasAttribute('data-current') && typeof saved[key] === 'boolean') {
+          details.open = saved[key] as boolean;
+        }
+        details.addEventListener('toggle', () => {
+          saved[key] = details.open;
+          persist();
+        });
+      });
+
+      if (scroller) {
+        const stored = saved['scrollTop'];
+        if (typeof stored === 'number') scroller.scrollTop = stored;
+        else this.querySelector('[aria-current="page"]')?.scrollIntoView({ block: 'nearest' });
+        window.addEventListener('pagehide', () => {
+          saved['scrollTop'] = scroller.scrollTop;
+          persist();
+        });
+      }
+      // Back / return buttons switch between the reading and global views in place.
+      this.addEventListener('click', (event) => {
+        const button = (event.target as Element).closest<HTMLElement>('[data-show]');
+        if (!button) return;
+        const view = button.dataset.show;
+        this.querySelectorAll<HTMLElement>('[data-view]').forEach((nav) => {
+          nav.hidden = nav.dataset.view !== view;
+        });
+        scroller?.scrollTo({ top: 0 });
+        this.querySelector<HTMLElement>(`[data-view="${view}"] a, [data-view="${view}"] summary`)?.focus();
+      });
+    }
+  }
+  customElements.define('phypedia-nav', PhypediaNav);
+</script>

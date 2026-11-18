@@ -1,0 +1,57 @@
+---
+/**
+ * Shared shell for the standalone pages (Home, Library, About, 404).
+ * It reuses Starlight's page chrome (head, theme, search, header, footer) so these
+ * pages stay visually identical to the documentation pages, minus the sidebars.
+ */
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+import { SITE } from '../lib/config';
+
+interface Props {
+  title: string;
+  description?: string;
+  /** Include this page in the search index. Off by default for utility pages. */
+  searchable?: boolean;
+  /** Show the left navigation sidebar. Starts collapsed; the header button opens it. */
+  sidebar?: boolean;
+}
+
+const { title, description = SITE.description, searchable = false, sidebar = false } = Astro.props;
+
+const head = [
+  // The home page title equals the site title; avoid a duplicated "Phypedia | Phypedia".
+  ...(title === SITE.title ? [{ tag: 'title' as const, content: SITE.title }] : []),
+  // Start collapsed on these pages, whatever the saved preference is.
+  ...(sidebar
+    ? [{ tag: 'script' as const, content: "document.documentElement.dataset.sidebar='collapsed'" }]
+    : []),
+];
+---
+
+<StarlightPage
+  frontmatter={{ title, description, template: 'splash', pagefind: searchable, head }}
+  hasSidebar={sidebar}
+>
+  <div class="page not-content">
+    <slot />
+  </div>
+</StarlightPage>
+
+<style>
+  .page {
+    width: 100%;
+    max-width: 62rem;
+    margin-inline: auto;
+  }
+</style>
+
+<style is:global>
+  /* Standalone pages have no post header: hide Starlight's empty title panel
+     and the divider line it leaves above the page content. */
+  main:has(.page) > .content-panel:first-child {
+    display: none;
+  }
+  main:has(.page) > .content-panel + .content-panel {
+    border-top: 0;
+  }
+</style>

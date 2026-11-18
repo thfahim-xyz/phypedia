@@ -1,0 +1,291 @@
+/**
+ * Phypedia design system: tokens, resets and typography foundations.
+ * Component-specific styles live inside their components; print rules in print.css.
+ *
+ * Edit the tokens below to restyle the whole site. The --sl-* block at the end maps
+ * them onto Starlight's variables so its built-in components follow the same palette.
+ */
+
+/* -------------------------------------------------------------------------- */
+/* Design tokens                                                              */
+/* -------------------------------------------------------------------------- */
+
+:root {
+  /* Typography */
+  --ph-font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --ph-font-display: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --ph-font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+
+  /* Layout */
+  --ph-sidebar-width: 20rem;
+  --ph-content-width: 55rem;
+  --ph-header-height: 3.75rem;
+
+  /* Dark theme (default until the theme script resolves the preference) */
+  --ph-bg: #0d0f14;
+  --ph-elevated: #151821;
+  --ph-hover: rgb(255 255 255 / 0.05);
+  --ph-glass: rgb(13 15 20 / 0.72);
+  --ph-border: #242836;
+  --ph-text: #c5cad6;
+  --ph-text-strong: #eceef3;
+  --ph-muted: #8b92a5;
+  --ph-accent: #2563eb;
+  --ph-accent-text: #7aa7ff;
+  --ph-accent-soft: rgb(37 99 235 / 0.16);
+}
+
+:root[data-theme='light'] {
+  --ph-bg: #fafaf8;
+  --ph-elevated: #ffffff;
+  --ph-hover: rgb(0 0 0 / 0.045);
+  --ph-glass: rgb(250 250 248 / 0.75);
+  --ph-border: #e3e4e8;
+  --ph-text: #2a2d36;
+  --ph-text-strong: #12141a;
+  --ph-muted: #5d6372;
+  --ph-accent: #2563eb;
+  --ph-accent-text: #1d4ed8;
+  --ph-accent-soft: rgb(37 99 235 / 0.09);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Starlight mapping                                                          */
+/* -------------------------------------------------------------------------- */
+
+:root {
+  --sl-font: var(--ph-font-sans);
+  --sl-font-mono: var(--ph-font-mono);
+  --sl-text-body: 1rem;
+  --sl-line-height: 1.75;
+
+  --sl-nav-height: var(--ph-header-height);
+  --sl-sidebar-width: var(--ph-sidebar-width);
+  --sl-content-width: var(--ph-content-width);
+
+  --sl-color-bg: var(--ph-bg);
+  --sl-color-bg-nav: var(--ph-glass);
+  --sl-color-bg-sidebar: var(--ph-bg);
+  --sl-color-bg-inline-code: var(--ph-elevated);
+  --sl-color-text: var(--ph-text);
+  --sl-color-white: var(--ph-text-strong);
+  --sl-color-text-accent: var(--ph-accent-text);
+  --sl-color-accent: var(--ph-accent);
+  --sl-color-accent-high: var(--ph-accent-text);
+  --sl-color-accent-low: var(--ph-accent-soft);
+  --sl-color-hairline: var(--ph-border);
+  --sl-color-hairline-light: var(--ph-border);
+  --sl-color-hairline-shade: var(--ph-border);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Foundations                                                                */
+/* -------------------------------------------------------------------------- */
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--ph-bg);
+  color: var(--ph-text);
+  font-family: var(--ph-font-sans);
+  font-size: 1rem;
+  line-height: 1.75;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--ph-accent-soft);
+}
+
+:focus-visible {
+  outline: 2px solid var(--ph-accent);
+  outline-offset: 2px;
+}
+
+img,
+svg,
+video {
+  max-width: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
+
+/* Header: translucent glass with a hairline, as the one place blur is used. */
+header.header {
+  border-block-end: 1px solid var(--ph-border);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  backdrop-filter: blur(14px) saturate(1.2);
+}
+
+/* Left sidebar: fixed width, collapsible on desktop via <html data-sidebar="collapsed">. */
+nav.sidebar .sidebar-pane {
+  border-inline-end: 1px solid var(--ph-border);
+  scrollbar-width: thin;
+}
+
+@media (min-width: 50rem) {
+  :root[data-sidebar='collapsed'] {
+    --sl-sidebar-width: 0rem;
+  }
+  :root[data-sidebar='collapsed'] nav.sidebar .sidebar-pane {
+    display: none;
+  }
+}
+
+/* -------------------------------------------------------------------------- */
+/* Typography                                                                 */
+/* -------------------------------------------------------------------------- */
+
+h1 {
+  font-family: var(--ph-font-display);
+  font-size: clamp(2rem, 5vw, 2.75rem);
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: var(--ph-text-strong);
+}
+
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--ph-font-sans);
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.005em;
+  color: var(--ph-text-strong);
+}
+
+h2 {
+  font-size: clamp(1.4rem, 3vw, 1.65rem);
+}
+h3 {
+  font-size: clamp(1.15rem, 2.4vw, 1.3rem);
+}
+h4 {
+  font-size: 1.05rem;
+}
+
+code,
+kbd,
+samp {
+  font-family: var(--ph-font-mono);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Article content (Markdown / MDX)                                           */
+/* -------------------------------------------------------------------------- */
+
+.sl-markdown-content {
+  overflow-wrap: break-word;
+}
+
+.sl-markdown-content :is(p, li) {
+  hyphens: auto;
+}
+
+/* Quotes */
+.sl-markdown-content blockquote {
+  margin-inline: 0;
+  padding: 0.25rem 0 0.25rem 1.25rem;
+  border-inline-start: 2px solid var(--ph-border);
+  color: var(--ph-muted);
+  font-style: italic;
+}
+
+/* Tables: scroll horizontally instead of breaking the layout. */
+.sl-markdown-content table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+.sl-markdown-content :is(th, td) {
+  padding: 0.55rem 0.9rem;
+  border: 1px solid var(--ph-border);
+}
+.sl-markdown-content th {
+  background: var(--ph-elevated);
+  color: var(--ph-text-strong);
+  font-weight: 600;
+  text-align: start;
+}
+
+/* Mathematics (SVG, rendered at build time) */
+mjx-container {
+  color: inherit;
+  /* The SVG is sized in ex units of this font size. Tune 110%–125% to taste. */
+  font-size: 115%;
+}
+
+/* Inline math: stays in the text flow, no block margins. */
+mjx-container:not([display='true']) {
+  display: inline-block;
+  margin: 0;
+  padding: 1px 0;
+  line-height: 0;
+  text-indent: 0;
+  white-space: nowrap;
+}
+
+/* Display math: its own centered block; long equations scroll instead of overflowing. */
+mjx-container[display='true'] {
+  display: block;
+  max-width: 100%;
+  margin: 1.25rem 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  text-align: center;
+}
+
+/* Restore MathJax native ex-based SVG sizing inside Starlight prose */
+.sl-markdown-content mjx-container svg {
+  display: inline;
+  height: revert;
+  max-width: none;
+}
+
+/* Prevent wide block equations from breaking mobile layouts */
+.sl-markdown-content mjx-container[display='true'] {
+  display: block;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-block: 0.5rem;
+}
+
+/* Footnotes and references */
+.sl-markdown-content section[data-footnotes] {
+  margin-block-start: 3rem;
+  padding-block-start: 1rem;
+  border-block-start: 1px solid var(--ph-border);
+  color: var(--ph-muted);
+  font-size: 0.9rem;
+}
+.sl-markdown-content section[data-footnotes] h2 {
+  margin-block-start: 0;
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.sl-markdown-content section[data-footnotes] ol {
+  padding-inline-start: 1.25rem;
+}
+.sl-markdown-content sup a {
+  text-decoration: none;
+}

@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# Replace with production domain (keep in sync with SITE.url in src/lib/config.ts)
+Sitemap: https://phypedia.vercel.app/sitemap-index.xml

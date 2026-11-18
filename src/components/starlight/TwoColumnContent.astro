@@ -1,0 +1,21 @@
+---
+/**
+ * Single-column layout. Starlight's default reserves a permanent right column for
+ * "On this page"; here the table of contents is a floating toggle (PageSidebar),
+ * so the article always gets the full width available to it.
+ */
+---
+
+<div class="layout">
+  <div class="main-pane">
+    <slot />
+  </div>
+  <slot name="right-sidebar" />
+</div>
+
+<style>
+  .main-pane {
+    isolation: isolate;
+    min-width: 0;
+  }
+</style>

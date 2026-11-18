@@ -1,0 +1,67 @@
+---
+/**
+ * Callout box for physics notes. Besides the usual note/tip/warning variants it
+ * offers the semantic blocks a lecture text needs: definition, theorem, example, remark.
+ *
+ * <Callout type="theorem" title="Noether's theorem">…</Callout>
+ */
+interface Props {
+  type?: 'note' | 'tip' | 'important' | 'warning' | 'definition' | 'theorem' | 'example' | 'remark';
+  /** Overrides the default title (the capitalised type). Use `title=""` for none. */
+  title?: string;
+}
+
+const { type = 'note', title } = Astro.props;
+const heading = title ?? type[0].toUpperCase() + type.slice(1);
+---
+
+<aside class="callout" data-type={type}>
+  {heading && <p class="title">{heading}</p>}
+  <div class="body"><slot /></div>
+</aside>
+
+<style>
+  .callout {
+    --tone: var(--ph-accent);
+    margin-block: 1.5rem;
+    padding: 0.9rem 1.1rem;
+    border-inline-start: 3px solid var(--tone);
+    border-radius: 0 0.5rem 0.5rem 0;
+    background: color-mix(in srgb, var(--tone) 8%, transparent);
+  }
+  [data-type='tip'],
+  [data-type='example'] {
+    --tone: #16a34a;
+  }
+  [data-type='warning'] {
+    --tone: #d97706;
+  }
+  [data-type='important'] {
+    --tone: #dc2626;
+  }
+  [data-type='remark'] {
+    --tone: var(--ph-muted);
+  }
+  [data-type='definition'],
+  [data-type='theorem'] {
+    --tone: var(--ph-accent);
+    background: var(--ph-accent-soft);
+  }
+  .title {
+    margin: 0 0 0.35rem;
+    color: var(--tone);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  [data-type='theorem'] .body {
+    font-style: italic;
+  }
+  .body > :global(:first-child) {
+    margin-block-start: 0;
+  }
+  .body > :global(:last-child) {
+    margin-block-end: 0;
+  }
+</style>

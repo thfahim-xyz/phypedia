@@ -1,0 +1,88 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { SITE } from '../lib/config';
+import { withBase } from '../lib/paths';
+---
+
+<BaseLayout title={SITE.title} description={SITE.description} sidebar>
+  <section class="hero">
+    <p class="eyebrow">Notes on the science of nature</p>
+    <h1>{SITE.title}</h1>
+    <p class="lede">{SITE.description}</p>
+    <p class="actions">
+      <a class="button primary" href={withBase('library')}>Explore</a>
+      <a class="button" href={withBase('about')}>About</a>
+    </p>
+  </section>
+</BaseLayout>
+
+<style>
+  .hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: calc(100svh - var(--sl-nav-height) - 14rem);
+    justify-content: center;
+    padding-block: clamp(3rem, 10vh, 7rem);
+    text-align: center;
+    background: radial-gradient(60% 50% at 50% 35%, var(--ph-accent-soft), transparent 70%);
+  }
+  .eyebrow {
+    margin: 0 0 1rem;
+    color: var(--ph-muted);
+    font-size: 0.8125rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+  h1 {
+    margin: 0;
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: clamp(3.25rem, 11vw, 6.5rem);
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: -0.01em;
+    color: var(--ph-text-strong);
+  }
+  .lede {
+    max-width: 34rem;
+    margin: 1.5rem 0 0;
+    color: var(--ph-muted);
+    font-size: clamp(1.05rem, 2.2vw, 1.25rem);
+    line-height: 1.6;
+  }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+    margin: 2.25rem 0 0;
+  }
+  .button {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    padding: 0.6rem 1.4rem;
+    border: 1px solid var(--ph-border);
+    border-radius: 999px;
+    color: var(--ph-text);
+    font-weight: 500;
+    text-decoration: none;
+    transition: border-color 0.15s ease, background-color 0.15s ease;
+  }
+  .button:hover {
+    border-color: var(--ph-accent);
+    background: var(--ph-hover);
+  }
+  .button:focus-visible {
+    outline: 2px solid var(--ph-accent);
+    outline-offset: 3px;
+  }
+  .button.primary {
+    border-color: var(--ph-accent);
+    background: var(--ph-accent);
+    color: #fff;
+  }
+  .button.primary:hover {
+    background: color-mix(in srgb, var(--ph-accent) 88%, #000);
+  }
+</style>

@@ -1,0 +1,86 @@
+---
+title: Post
+draft: false
+---
+
+import Callout from '@components/Callout.astro';
+import Columns from '@components/Columns.astro';
+import Figure from '@components/Figure.astro';
+import Mermaid from '@components/Mermaid.astro';
+import Toggle from '@components/Toggle.astro';
+
+This section is a tour of the authoring features.
+
+## Columns
+
+<Columns count={2}>
+
+<div>
+This is the first column.
+</div>
+<div>
+This is the second column.
+</div>
+
+</Columns>
+
+## Callouts
+
+<Callout title="Example Callout">
+
+This is a callout.
+
+</Callout>
+
+## Toggles
+
+<Toggle title="Example Toggle">
+
+This is a toggle.
+
+</Toggle>
+
+## Figures
+
+First import the image:
+
+```
+import image from './image.png';
+```
+
+Then include it in the page:
+
+```
+<Figure src={image} alt="Alt text for the image" caption="Caption for the figure" />
+```
+
+## Mermaid Diagrams
+
+<Mermaid
+  label="Flowchart"
+  code={`flowchart LR
+  A[Node A] --> B[Node B]
+  B --> C[Node C]
+  B --> D[Node D]`}
+/>
+
+## Math
+
+Inline math: $e^{i\pi} + 1 = 0$
+
+Display math:
+
+$$
+  E = mc^2
+$$
+
+## Code
+
+```c++
+#include <iostream>
+
+int main() {
+    std::cout << "Hello, World!" << std::endl;
+    return 0;
+}
+```

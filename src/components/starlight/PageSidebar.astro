@@ -1,0 +1,113 @@
+---
+/**
+ * "On this page": a floating toggle at the top right that opens Starlight's own
+ * table of contents in a popover panel. Collapsed by default, never takes layout
+ * space, and works without a separate mobile variant.
+ */
+import TableOfContents from '@astrojs/starlight/components/TableOfContents.astro';
+
+const { toc } = Astro.locals.starlightRoute;
+---
+
+{
+  toc && (
+    <phypedia-toc>
+      <details class="toc">
+        <summary aria-label="On this page" title="On this page">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true">
+            <path d="M4 6.5h16M4 12h11M4 17.5h7" />
+          </svg>
+        </summary>
+        <div class="panel">
+          <TableOfContents />
+        </div>
+      </details>
+    </phypedia-toc>
+  )
+}
+
+<style>
+  .toc {
+    position: fixed;
+    inset-block-start: calc(var(--sl-nav-height) + 0.75rem);
+    inset-inline-end: max(1rem, env(safe-area-inset-right));
+    z-index: calc(var(--sl-z-index-navbar) - 1);
+  }
+  summary {
+    display: grid;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    margin-inline-start: auto;
+    border: 1px solid var(--ph-border);
+    border-radius: 999px;
+    background: var(--ph-glass);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    color: var(--ph-muted);
+    cursor: pointer;
+    list-style: none;
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+  summary::-webkit-details-marker {
+    display: none;
+  }
+  summary:hover,
+  .toc[open] summary {
+    color: var(--ph-accent-text);
+    border-color: var(--ph-accent);
+  }
+  summary:focus-visible {
+    outline: 2px solid var(--ph-accent);
+    outline-offset: 2px;
+  }
+  .panel {
+    box-sizing: border-box;
+    width: min(20rem, calc(100vw - 2rem));
+    max-height: min(70vh, 32rem);
+    margin-block-start: 0.5rem;
+    padding: 0.75rem 1rem;
+    overflow-y: auto;
+    border: 1px solid var(--ph-border);
+    border-radius: 0.75rem;
+    background: var(--ph-elevated);
+    box-shadow: 0 12px 32px -12px rgb(0 0 0 / 0.35);
+  }
+  /* Neutral entries: muted text, with the active heading in strong text instead of accent blue. */
+  .panel :global(starlight-toc a) {
+    color: var(--ph-muted);
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+  .panel :global(starlight-toc a:hover) {
+    color: var(--ph-text-strong);
+  }
+  .panel :global(starlight-toc a[aria-current='true']) {
+    color: var(--ph-text-strong);
+    font-weight: 600;
+  }
+</style>
+
+<script>
+  /** Closes the panel on outside click, Escape, or after choosing a heading. */
+  class PhypediaToc extends HTMLElement {
+    connectedCallback() {
+      const details = this.querySelector('details');
+      if (!details) return;
+
+      document.addEventListener('click', (event) => {
+        if (!details.open || !(event.target instanceof Node)) return;
+        const insidePanel = details.contains(event.target);
+        const choseLink = event.target instanceof Element && event.target.closest('.panel a');
+        if (!insidePanel || choseLink) details.open = false;
+      });
+
+      document.addEventListener('keydown', (event) => {
+        if (event.key !== 'Escape' || !details.open) return;
+        details.open = false;
+        details.querySelector('summary')?.focus();
+      });
+    }
+  }
+  customElements.define('phypedia-toc', PhypediaToc);
+</script>

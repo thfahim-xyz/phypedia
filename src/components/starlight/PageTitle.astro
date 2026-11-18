@@ -1,0 +1,63 @@
+---
+/**
+ * Post header: breadcrumb (domain › book › chapter) above the page title.
+ * Standalone pages (Home, Library, About, 404) render their own headings.
+ */
+import { getTrail } from '../../lib/site';
+
+const { entry, hasSidebar } = Astro.locals.starlightRoute;
+const trail = hasSidebar ? await getTrail(Astro.url.pathname) : [];
+const ancestors = trail.slice(0, -1);
+---
+
+{
+  hasSidebar && (
+    <header class="post-header">
+      {
+        ancestors.length > 0 && (
+          <nav class="crumbs" aria-label="Breadcrumb">
+            <ol>
+              {ancestors.map((node) => (
+                <li>{node.entry ? <a href={node.href}>{node.title}</a> : <span>{node.title}</span>}</li>
+              ))}
+            </ol>
+          </nav>
+        )
+      }
+      <h1 id="_top" data-page-title>{entry.data.title}</h1>
+    </header>
+  )
+}
+
+<style>
+  .post-header {
+    margin-block-end: 0.5rem;
+  }
+  .crumbs ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.5rem;
+    margin: 0 0 0.75rem;
+    padding: 0;
+    list-style: none;
+    font-size: 0.8125rem;
+    letter-spacing: 0.02em;
+    color: var(--ph-muted);
+  }
+  .crumbs li + li::before {
+    content: '›';
+    margin-inline-end: 0.5rem;
+    opacity: 0.6;
+  }
+  .crumbs a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .crumbs a:hover {
+    color: var(--ph-accent-text);
+    text-decoration: underline;
+  }
+  h1 {
+    margin: 0;
+  }
+</style>

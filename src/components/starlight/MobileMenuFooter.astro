@@ -1,0 +1,39 @@
+---
+/**
+ * Rendered at the bottom of the mobile navigation drawer. The header hides its own
+ * links and theme toggle on narrow screens, so they live here instead.
+ */
+import ThemeSelect from './ThemeSelect.astro';
+import { withBase } from '../../lib/paths';
+---
+
+<div class="drawer-footer">
+  <nav aria-label="Site">
+    <a href={withBase('library')}>Library</a>
+    <a href={withBase('about')}>About</a>
+  </nav>
+  <ThemeSelect />
+</div>
+
+<style>
+  .drawer-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-block-start: 1rem;
+    border-block-start: 1px solid var(--ph-border);
+  }
+  nav {
+    display: flex;
+    gap: 1.25rem;
+  }
+  a {
+    color: var(--ph-text);
+    text-decoration: none;
+    font-weight: 500;
+  }
+  a:hover {
+    color: var(--ph-accent-text);
+  }
+</style>

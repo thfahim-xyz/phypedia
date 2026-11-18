@@ -1,0 +1,81 @@
+---
+/**
+ * Table of contents for overview pages (domain, book, chapter).
+ * Lists the page's descendants from the filesystem tree and renders nothing
+ * on leaf sections. The recursive call (with `nodes`) renders just the nested list.
+ */
+import { getNode, startHref, type NavNode } from '../lib/site';
+import Self from './Contents.astro';
+
+interface Props {
+  nodes?: NavNode[];
+}
+
+const { nodes: given } = Astro.props;
+const nodes = given ?? (await getNode(Astro.url.pathname))?.children ?? [];
+---
+
+{
+  given ? (
+    <ol>
+      {nodes.map((node) => (
+        <li>
+          <a href={node.entry ? node.href : startHref(node)}>{node.title}</a>
+          {node.children.length > 0 && <Self nodes={node.children} />}
+        </li>
+      ))}
+    </ol>
+  ) : (
+    nodes.length > 0 && (
+      <nav class="contents not-content" aria-label="Contents">
+        <h2>Contents</h2>
+        <Self nodes={nodes} />
+      </nav>
+    )
+  )
+}
+
+<style>
+  .contents {
+    margin-block-start: 2.5rem;
+    padding-block-start: 1.25rem;
+    border-block-start: 1px solid var(--ph-border);
+  }
+  h2 {
+    margin: 0 0 0.75rem;
+    color: var(--ph-muted);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  /* Nested levels get a quiet guide line, like the sidebar. */
+  ol ol {
+    margin-inline-start: 0.5rem;
+    padding-inline-start: 1rem;
+    border-inline-start: 1px solid var(--ph-border);
+  }
+  a {
+    display: block;
+    padding-block: 0.3rem;
+    color: var(--ph-text);
+    text-decoration: none;
+  }
+  a:hover {
+    color: var(--ph-accent-text);
+  }
+  /* Top level (chapters or books) slightly stronger than their sections. */
+  .contents > ol > li > a {
+    font-weight: 500;
+    color: var(--ph-text-strong);
+    padding-block-start: 0.5rem;
+  }
+  .contents > ol > li > a:hover {
+    color: var(--ph-accent-text);
+  }
+</style>

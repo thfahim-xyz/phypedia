@@ -1,0 +1,89 @@
+---
+/**
+ * Previous/next links in reading order within the current book.
+ * Computed from the filesystem (src/lib/site.ts), not from Starlight's sidebar.
+ */
+import { getAdjacentPages } from '../../lib/site';
+
+const { prev, next } = await getAdjacentPages(Astro.url.pathname);
+---
+
+{
+  (prev || next) && (
+    <nav class="pager" aria-label="Previous and next page">
+      {
+        prev ? (
+          <a class="prev" href={prev.href} rel="prev">
+            <span class="hint">Previous</span>
+            <span class="name">{prev.title}</span>
+          </a>
+        ) : (
+          <span />
+        )
+      }
+      {
+        next && (
+          <a class="next" href={next.href} rel="next">
+            <span class="hint">Next</span>
+            <span class="name">{next.title}</span>
+          </a>
+        )
+      }
+    </nav>
+  )
+}
+
+<style>
+  .pager {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+    margin-block-start: 3rem;
+  }
+  a {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    padding: 0.9rem 1.1rem;
+    border: 1px solid var(--ph-border);
+    border-radius: 0.6rem;
+    color: var(--ph-text);
+    text-decoration: none;
+    transition: border-color 0.15s ease, background-color 0.15s ease;
+  }
+  a:hover {
+    border-color: var(--ph-accent);
+    background: var(--ph-hover);
+  }
+  a:focus-visible {
+    outline: 2px solid var(--ph-accent);
+    outline-offset: 2px;
+  }
+  .next {
+    grid-column: 2;
+    text-align: end;
+  }
+  .hint {
+    color: var(--ph-muted);
+    font-size: 0.8rem;
+    letter-spacing: 0.02em;
+  }
+  .name {
+    font-weight: 500;
+    color: var(--ph-accent-text);
+    overflow-wrap: anywhere;
+  }
+  @media print {
+    .pager {
+      display: none;
+    }
+  }
+  @media (max-width: 34rem) {
+    .pager {
+      grid-template-columns: 1fr;
+    }
+    .next {
+      grid-column: auto;
+    }
+  }
+</style>

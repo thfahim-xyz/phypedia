@@ -1,0 +1,79 @@
+---
+/**
+ * Page footer: previous/next navigation (inside books), then copyright, social
+ * links and an About link. Omitted on the 404 page. Starlight's default
+ * last-updated and edit-link rows are intentionally not rendered.
+ */
+import Pagination from './Pagination.astro';
+import SocialLinks from '../SocialLinks.astro';
+import { SITE } from '../../lib/config';
+import { withBase } from '../../lib/paths';
+
+const { hasSidebar } = Astro.locals.starlightRoute;
+const is404 = /\/404\/?$/.test(Astro.url.pathname);
+const year = new Date().getFullYear();
+---
+
+{
+  !is404 && (
+    <>
+      {hasSidebar && <Pagination />}
+      <p class="print-copyright">© {year} {SITE.author}</p>
+      <footer class="site-footer">
+        <p class="copyright">© {year} {SITE.author}</p>
+        <div class="extras">
+          <SocialLinks />
+        </div>
+      </footer>
+    </>
+  )
+}
+
+<style>
+  .site-footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem 1.5rem;
+    margin-block-start: 3rem;
+    padding-block: 1.25rem;
+    border-block-start: 1px solid var(--ph-border);
+    color: var(--ph-muted);
+    font-size: 0.875rem;
+  }
+  .copyright {
+    margin: 0;
+  }
+  .extras {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .about {
+    color: var(--ph-muted);
+    text-decoration: none;
+  }
+  .about:hover {
+    color: var(--ph-text);
+  }
+
+  .print-copyright {
+    display: none;
+  }
+  @media print {
+    .site-footer {
+      display: none;
+    }
+    /* A fixed element repeats on every printed page: copyright at the bottom-right. */
+    .print-copyright {
+      display: block;
+      position: fixed;
+      inset-block-end: 0;
+      inset-inline-end: 0;
+      margin: 0;
+      font-size: 9pt;
+      color: #444;
+    }
+  }
+</style>

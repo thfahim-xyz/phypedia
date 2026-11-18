@@ -1,0 +1,91 @@
+{
+  "title": "Books",
+  "description": "Recommended textbooks for learning physics.",
+  "items": [
+    {
+      "title": "Fundamentals of Physics",
+      "by": "David Halliday, Jearl Walker, Robert Resnick",
+      "url": "https://en.wikipedia.org/wiki/Fundamentals_of_Physics"
+    },
+    {
+      "title": "University Physics: With Modern Physics",
+      "by": "Hugh Young, Roger Freedman, Francis Sears, Mark Zemansky",
+      "url": "https://en.wikipedia.org/wiki/University_Physics"
+    },
+    {
+      "title": "Mathematical Methods in the Physical Sciences",
+      "by": "Mary L. Boas",
+      "url": "https://en.wikipedia.org/wiki/Mathematical_Methods_in_the_Physical_Sciences"
+    },
+    {
+      "title": "Mathematical Methods for Physicists",
+      "by": "George B. Arfken, Hans J. Weber, Frank E. Harris",
+      "url": "https://books.google.com.bd/books/about/Mathematical_Methods_for_Physicists.html?id=qLFo_Z-PoGIC"
+    },
+    {
+      "title": "An Introduction to Mechanics",
+      "by": "Daniel Kleppner, Robert J. Kolenkow",
+      "url": "https://en.wikipedia.org/wiki/An_Introduction_to_Mechanics"
+    },
+    {
+      "title": "Classical Mechanics",
+      "by": "John R. Taylor",
+      "url": "https://books.google.com.bd/books/about/Classical_Mechanics.html?id=P1kCtNr-pJsC"
+    },
+    {
+      "title": "Classical Mechanics",
+      "by": "Herbert Goldstein",
+      "url": "https://en.wikipedia.org/wiki/Classical_Mechanics_(Goldstein)"
+    },
+    {
+      "title": "An Introduction to Thermal Physics",
+      "by": "Daniel V. Schroeder",
+      "url": "https://www.google.com.bd/books/edition/An_Introduction_to_Thermal_Physics/M0BgQwAACAAJ"
+    },
+    {
+      "title": "Thermodynamics and an Introduction to Thermostatistics",
+      "by": "Herbert Callen",
+      "url": "https://en.wikipedia.org/wiki/Thermodynamics_and_an_Introduction_to_Thermostatistics"
+    },
+    {
+      "title": "Introduction to Electrodynamics",
+      "by": "David J. Griffiths",
+      "url": "https://en.wikipedia.org/wiki/Introduction_to_Electrodynamics"
+    },
+    {
+      "title": "Classical Electrodynamics",
+      "by": "John David Jackson",
+      "url": "https://en.wikipedia.org/wiki/Classical_Electrodynamics_(book)"
+    },
+    {
+      "title": "Spacetime Physics",
+      "by": "John Archibald Wheeler",
+      "url": "https://books.google.com.bd/books/about/Spacetime_Physics.html?id=jAN2NQEACAAJ"
+    },
+    {
+      "title": "Lecture Notes on General Relativity",
+      "by": "Sean M. Carroll",
+      "url": "https://arxiv.org/pdf/gr-qc/9712019"
+    },
+    {
+      "title": "A First Course in General Relativity",
+      "by": "Bernard F. Schutz",
+      "url": "https://books.google.com.bd/books/about/A_First_Course_in_General_Relativity.html?id=V1CGLi58W7wC"
+    },
+    {
+      "title": "Gravitation",
+      "by": "Charles W. Misner, Kip S. Thorne, John Archibald Wheeler",
+      "url": "https://en.wikipedia.org/wiki/Gravitation_(book)"
+    },
+    {
+      "title": "Introduction to Quantum Mechanics",
+      "by": "David J. Griffiths",
+      "url": "https://en.wikipedia.org/wiki/Introduction_to_Quantum_Mechanics_(book)"
+    },
+    {
+      "title": "Modern Quantum Mechanics",
+      "by": "J. J. Sakurai, Jim Napolitano",
+      "url": "https://en.wikipedia.org/wiki/Modern_Quantum_Mechanics"
+    }
+  ]
+}

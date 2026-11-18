@@ -1,0 +1,176 @@
+---
+/**
+ * Site header: title (left), search (center), Library · About · theme (right).
+ * Hidden on the 404 page. On documentation pages it also hosts the desktop
+ * sidebar collapse button; on narrow screens the links move into the drawer.
+ */
+import Search from '@astrojs/starlight/components/Search.astro';
+import ThemeSelect from './ThemeSelect.astro';
+import { SITE } from '../../lib/config';
+import { withBase } from '../../lib/paths';
+
+const { hasSidebar } = Astro.locals.starlightRoute;
+const is404 = /\/404\/?$/.test(Astro.url.pathname);
+---
+
+{
+  is404 ? (
+    // No header on 404: collapse the space Starlight reserves for it.
+    <style is:inline set:html=":root{--sl-nav-height:0px}header.header{display:none}" />
+  ) : (
+    <div class:list={['bar', { 'has-sidebar': hasSidebar }]}>
+      <div class="start">
+        {
+          hasSidebar && (
+            <button
+              type="button"
+              class="collapse"
+              data-sidebar-toggle
+              aria-label="Toggle sidebar"
+              aria-expanded="true"
+            >
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="3.5" y="4.5" width="17" height="15" rx="2.5" />
+                <path d="M9.5 4.5v15" />
+              </svg>
+            </button>
+          )
+        }
+        <a class="title" href={withBase()}>{SITE.title}</a>
+      </div>
+
+      <div class="search">
+        <Search />
+      </div>
+
+      <div class="end">
+        <nav class="links" aria-label="Site">
+          <a href={withBase('library')}>Library</a>
+          <a href={withBase('about')}>About</a>
+        </nav>
+        <span class="theme"><ThemeSelect /></span>
+      </div>
+    </div>
+  )
+}
+
+<style>
+  .search {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  }
+  .bar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 28rem) minmax(0, 1fr);
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+    height: 100%;
+  }
+  .start,
+  .end {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .end {
+    justify-content: flex-end;
+    gap: 0.25rem;
+  }
+  .title {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 1.4rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    color: var(--ph-text-strong);
+    text-decoration: none;
+  }
+  .collapse {
+    display: none;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: 0;
+    border: 0;
+    border-radius: 0.5rem;
+    background: transparent;
+    color: var(--ph-muted);
+    cursor: pointer;
+    transition: color 0.15s ease, background-color 0.15s ease;
+  }
+  .collapse:hover {
+    color: var(--ph-text);
+    background: var(--ph-hover);
+  }
+  .collapse:focus-visible,
+  .title:focus-visible,
+  .links a:focus-visible {
+    outline: 2px solid var(--ph-accent);
+    outline-offset: 2px;
+  }
+  .links {
+    display: flex;
+    gap: 0.25rem;
+  }
+  .links a {
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.5rem;
+    color: var(--ph-muted);
+    font-size: 0.95rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: color 0.15s ease, background-color 0.15s ease;
+  }
+  .links a:hover {
+    color: var(--ph-text);
+    background: var(--ph-hover);
+  }
+
+  @media (min-width: 50rem) {
+    .collapse {
+      display: inline-grid;
+    }
+  }
+
+  @media (max-width: 49.99rem) {
+    /* title | search | links + theme (pages without a sidebar) */
+    .bar {
+      grid-template-columns: minmax(0, 1fr) auto auto;
+      gap: 0.5rem;
+    }
+    /* With a sidebar, links and theme live in the drawer, and Starlight's mobile
+       menu button is fixed at the inline end, so leave it room. */
+    .bar.has-sidebar {
+      grid-template-columns: minmax(0, 1fr) auto;
+      padding-inline-end: 2.75rem;
+    }
+    .bar.has-sidebar .end {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  // Desktop sidebar collapse: state lives on <html data-sidebar>, persisted locally.
+  document.addEventListener('click', (event) => {
+    if (!(event.target instanceof Element)) return;
+    const button = event.target.closest<HTMLButtonElement>('[data-sidebar-toggle]');
+    if (!button) return;
+
+    const root = document.documentElement;
+    const collapsed = root.dataset.sidebar !== 'collapsed';
+    if (collapsed) root.dataset.sidebar = 'collapsed';
+    else delete root.dataset.sidebar;
+    button.setAttribute('aria-expanded', String(!collapsed));
+    try {
+      localStorage.setItem('phypedia-sidebar', collapsed ? 'collapsed' : 'expanded');
+    } catch {
+      /* storage unavailable: the choice simply won't persist */
+    }
+  });
+
+  // Keep aria-expanded truthful when the preference was restored before paint.
+  const toggle = document.querySelector('[data-sidebar-toggle]');
+  toggle?.setAttribute('aria-expanded', String(document.documentElement.dataset.sidebar !== 'collapsed'));
+</script>

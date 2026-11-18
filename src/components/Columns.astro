@@ -1,0 +1,42 @@
+---
+/**
+ * Flexible multi-column layout. Each direct child becomes a column; columns stack
+ * on narrow screens.
+ *
+ * <Columns count={3}>
+ *   <div>…</div> <div>…</div> <div>…</div>
+ * </Columns>
+ */
+interface Props {
+  /** Number of columns on wide screens (default 2). */
+  count?: number;
+}
+
+const { count = 2 } = Astro.props;
+const style = `--columns: ${Math.max(1, Math.floor(count))}`;
+---
+
+<div class="columns" style={style}>
+  <slot />
+</div>
+
+<style>
+  .columns {
+    display: grid;
+    grid-template-columns: repeat(var(--columns, 2), minmax(0, 1fr));
+    gap: 1rem 2rem;
+    margin-block: 1.5rem;
+  }
+  .columns > :global(*) {
+    min-width: 0;
+  }
+  .columns > :global(:first-child),
+  .columns > :global(* > :first-child) {
+    margin-block-start: 0;
+  }
+  @media (max-width: 40rem) {
+    .columns {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

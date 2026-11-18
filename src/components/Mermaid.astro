@@ -1,0 +1,90 @@
+---
+/**
+ * Mermaid diagram island. The diagram source ships as readable text (shown as-is
+ * without JavaScript) and is rendered client-side only when it scrolls into view;
+ * the Mermaid library is loaded lazily and follows the light/dark theme.
+ *
+ * <Mermaid code={`graph LR
+ *   A[Force] --> B[Acceleration]`} />
+ */
+interface Props {
+  code: string;
+  /** Accessible description of the diagram. */
+  label?: string;
+}
+
+const { code, label = 'Diagram' } = Astro.props;
+---
+
+<phypedia-mermaid data-code={code} role="img" aria-label={label}>
+  <pre><code>{code}</code></pre>
+</phypedia-mermaid>
+
+<style>
+  phypedia-mermaid {
+    display: block;
+    margin-block: 1.5rem;
+    overflow-x: auto;
+    text-align: center;
+  }
+  phypedia-mermaid :global(svg) {
+    max-width: 100%;
+    height: auto;
+  }
+  pre {
+    margin: 0;
+    text-align: start;
+  }
+</style>
+
+<script>
+  type MermaidApi = typeof import('mermaid').default;
+
+  let mermaidPromise: Promise<MermaidApi> | undefined;
+  let counter = 0;
+
+  const currentTheme = () => (document.documentElement.dataset.theme === 'dark' ? 'dark' : 'neutral');
+
+  const loadMermaid = () =>
+    (mermaidPromise ??= import('mermaid').then((module) => module.default));
+
+  class PhypediaMermaid extends HTMLElement {
+    private rendered = false;
+
+    connectedCallback() {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          if (!entries.some((entry) => entry.isIntersecting)) return;
+          observer.disconnect();
+          void this.render();
+        },
+        { rootMargin: '200px' },
+      );
+      observer.observe(this);
+
+      // Re-render when the reader switches theme.
+      new MutationObserver(() => {
+        if (this.rendered) void this.render();
+      }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+    }
+
+    async render() {
+      const code = this.dataset.code ?? '';
+      try {
+        const mermaid = await loadMermaid();
+        mermaid.initialize({
+          startOnLoad: false,
+          securityLevel: 'strict',
+          theme: currentTheme(),
+          fontFamily: 'Inter, system-ui, sans-serif',
+        });
+        const { svg } = await mermaid.render(`phypedia-mermaid-${counter++}`, code);
+        this.innerHTML = svg;
+        this.rendered = true;
+      } catch {
+        // Leave the readable source in place when the diagram has a syntax error.
+      }
+    }
+  }
+  customElements.define('phypedia-mermaid', PhypediaMermaid);
+</script>

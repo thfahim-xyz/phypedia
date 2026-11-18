@@ -1,0 +1,20 @@
+{
+  "title": "YouTube",
+  "description": "Physics-related YouTube channels.",
+  "items": [
+    { "title": "3Blue1Brown", "url": "https://www.youtube.com/@3blue1brown" },
+    { "title": "Physics with Elliot", "url": "https://www.youtube.com/@PhysicswithElliot" },
+    { "title": "Quantum Sense", "url": "https://www.youtube.com/@quantumsensechannel" },
+    { "title": "All Things Physics", "url": "https://www.youtube.com/@AllThingsPhysicsYouTube" },
+    { "title": "eigenchris", "url": "https://www.youtube.com/@eigenchris" },
+    { "title": "MIT OpenCourseWare", "url": "https://www.youtube.com/@mitocw" },
+    { "title": "PBS Space Time", "url": "https://www.youtube.com/@pbsspacetime" },
+    { "title": "Physics Explained", "url": "https://www.youtube.com/@PhysicsExplainedVideos" },
+    { "title": "minutephysics", "url": "https://www.youtube.com/@MinutePhysics" },
+    { "title": "Looking Glass Universe", "url": "https://www.youtube.com/@LookingGlassUniverse" },
+    { "title": "Physics Girl", "url": "https://www.youtube.com/@physicsgirl/" },
+    { "title": "Veritasium", "url": "https://www.youtube.com/@veritasium" },
+    { "title": "CrashCourse", "url": "https://www.youtube.com/@crashcourse" },
+    { "title": "Michel van Biezen", "url": "https://www.youtube.com/@MichelvanBiezen" }
+  ]
+}

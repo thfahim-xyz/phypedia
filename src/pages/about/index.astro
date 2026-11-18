@@ -1,0 +1,59 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import SocialLinks from '@components/SocialLinks.astro';
+import { SITE } from '@lib/config';
+---
+
+<BaseLayout title="About" description={`About ${SITE.title} and its author.`} sidebar>
+  <article class="about">
+    <h1>About {SITE.title}</h1>
+
+    <p class="lead">
+      {SITE.title} is a personal knowledge base dedicated to the study of physics. It brings together concise notes that explore physical concepts through intuition, mathematical formulation, and fundamental principles.
+    </p>
+
+    <h2>About This Site</h2>
+    <p>
+      The library is organized into five domains: fundamentals, classical, statistical, relativistic, and quantum physics. Each domain contains books, organized into chapters and concise sections. The content is continually evolving, refined as understanding deepens and new connections emerge.
+    </p>
+
+    <h2>About Me</h2>
+    <p>
+      I'm {SITE.author}, a learner with interests in physics, mathematics, philosophy, and computer science. I'm drawn to the fundamental principles underlying the universe and the ideas, methods, and reasoning through which we understand it. I value intellectual curiosity, clarity, critical thinking, and independent thought.
+    </p>
+    <p>
+      For questions, suggestions, or intellectual exchange, feel free to get in touch.
+    </p>
+
+    <h2>Contact</h2>
+    <SocialLinks labels />
+  </article>
+</BaseLayout>
+
+<style>
+  .about {
+    max-width: 55rem;
+    padding-block: clamp(2rem, 6vw, 4rem);
+    line-height: 1.75;
+  }
+  h1 {
+    margin: 0 0 1.5rem;
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: clamp(2.25rem, 6vw, 3.25rem);
+    font-weight: 500;
+    color: var(--ph-text-strong);
+  }
+  h2 {
+    margin: 2.5rem 0 0.5rem;
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--ph-text-strong);
+  }
+  p {
+    margin: 0 0 1rem;
+  }
+  .lead {
+    font-size: 1.10rem;
+    color: var(--ph-text-strong);
+  }
+</style>
